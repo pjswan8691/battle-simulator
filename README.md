@@ -7,7 +7,7 @@ Instantiate an enemy:
 
     Syntax: 
     
-        enemy = GenerateMonster(str => name, int => health, int => gold, str => weapon, int => ac)
+        enemy = GenerateMonster(str name, int health, int gold, str weapon, int ac)
         
     Example:
     
