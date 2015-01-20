@@ -40,14 +40,6 @@ def determineDamage(weapon, modifier, directed): #(weapon, modifier, directed)
 		return inflictDamage(opponent, 100, 250)
 	return
 
-def usePlayerSpecial(action):
-	if attack == "Holy Light":
-		#code
-	elif attack == "Retribution":
-		#code
-	else:
-		return 'error'
-
 def inflictDamage(inflicted, min, max):
 	damageInflicted = random.randrange(min, max+1)
 	if damageInflicted == 0:
