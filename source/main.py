@@ -12,6 +12,15 @@ class GenerateMonster():
         self.ac = ac
 
 def checkMissPlayer(defender):
+	"""
+
+	Returns a boolean token: if player missed or not.
+
+	If defenders AC (Armor Class) is above players hit the token will evaluate to False,
+	and the player will respectively miss.
+
+	"""
+
 	global currPlayerHitToken
 	missChance = random.randrange(0, 25)
 
@@ -23,6 +32,15 @@ def checkMissPlayer(defender):
 		return currPlayerHitToken
 
 def checkMissOpponent(defender):
+	"""
+
+	Returns a boolean token: if opponent missed or not.
+
+	If defenders AC (Armor Class) is above opponents hit, the token will evaluate to False,
+	and the opponent will respectively miss.
+
+	"""
+
 	global currOpponentHitToken
 	missChance = random.randrange(0, 25) # make this variable
 
@@ -33,7 +51,16 @@ def checkMissOpponent(defender):
 		currPlayerHitToken = True
 		return currOpponentHitToken
 
-def determineDamage(weapon, modifier, directed): #(weapon, modifier, directed)
+def determineDamage(weapon, modifier, directed):
+	"""
+
+	Returns an integer: damage inflicted by the weapon.
+
+	Relative to the player/opponent's weapon, inflictDamage is called and the function's
+	effects to the opposing's HP is calculated.
+
+	"""
+
 	if weapon == "fists" or weapon == "claws":
 		return inflictDamage(player, 2 * modifier, 6 * modifier)
 	elif weapon == "Iron Broadsword":
@@ -41,6 +68,11 @@ def determineDamage(weapon, modifier, directed): #(weapon, modifier, directed)
 	return
 
 def inflictDamage(inflicted, min, max):
+	"""
+
+	Returns damage inflicted to determineDamage: which is called in main().
+
+	"""
 	damageInflicted = random.randrange(min, max+1)
 	if damageInflicted == 0:
 		return 'Miss!'
@@ -49,6 +81,11 @@ def inflictDamage(inflicted, min, max):
 		return damageInflicted
 
 def getWinner(player, enemy):
+	"""
+
+	Returns winner of the match by comparing object's HP attribute once knocked below zero.
+
+	"""
 	if player.health > enemy.health:
 		print player.name, 'wins!'
 	else:
