@@ -86,6 +86,7 @@ def getWinner(player, enemy):
 	Returns winner of the match by comparing object's HP attribute once knocked below zero.
 
 	"""
+
 	if player.health > enemy.health:
 		print player.name, 'wins!'
 	else:
@@ -93,6 +94,9 @@ def getWinner(player, enemy):
 
 def getHP(character):
 	return character.health
+
+
+	
 
 opponent = GenerateMonster('Goblin King', 1000, 100, 'fists', 15, ['Shred'])
 player = GenerateMonster('Paladin', 150, 200, 'Iron Broadsword', 15, ['Holy Light', 'Retribution'])
@@ -106,7 +110,6 @@ def main():
 
 		time.sleep(1)
 
-		#print checkMissPlayer(opponent.ac)
 		if (currPlayerHitToken):
 			print "%s HP:" % player.name, getHP(player)
 			print "Damage to %s:" % opponent.name, determineDamage(player.weapon, 1, opponent.health)
@@ -115,8 +118,6 @@ def main():
 	   		print '%s missed!' % player.name
 
 		time.sleep(1)
-
-	   	#print checkMissOpponent(player.ac)
 
 	   	if(currOpponentHitToken):
 	   		print "%s HP:" % opponent.name, getHP(opponent)
