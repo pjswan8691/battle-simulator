@@ -4,7 +4,7 @@ currPlayerHitToken = True
 currOpponentHitToken = True
 
 class GenerateMonster():
-    def __init__(self, name, health, gold, weapon, ac, *specials):
+    def __init__(self, name, health, gold, weapon, ac):
         self.name = name
         self.health = health
         self.gold = gold
@@ -96,10 +96,10 @@ def getHP(character):
 	return character.health
 
 
-	
 
-opponent = GenerateMonster('Goblin King', 1000, 100, 'fists', 15, ['Shred'])
-player = GenerateMonster('Paladin', 150, 200, 'Iron Broadsword', 15, ['Holy Light', 'Retribution'])
+
+opponent = GenerateMonster('Goblin King', 1000, 100, 'fists', 15)
+player = GenerateMonster('Paladin', 150, 200, 'Iron Broadsword', 15)
 
 def main():
 
