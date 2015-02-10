@@ -5,6 +5,6 @@ Command line battle simulator written in pure-Python.
 
 Instantiate an enemy:
 
-'''python
+```python
     enemy = GenerateMonster(str name, int health, int gold, str weapon, int ac)
-'''
+```
