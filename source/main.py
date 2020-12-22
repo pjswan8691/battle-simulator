@@ -1,15 +1,16 @@
-import random, time
+import random, time, math
 
 currPlayerHitToken = True
 currOpponentHitToken = True
 
 class GenerateMonster():
-    def __init__(self, name, health, gold, weapon, ac):
+    def __init__(self, name, health, gold, weapon, ac, lvl):
         self.name = name
         self.health = health
         self.gold = gold
         self.weapon = weapon
         self.ac = ac
+        self.lvl = lvl
 
 def checkMissPlayer(defender):
     """
@@ -64,7 +65,7 @@ def determineDamage(weapon, modifier, directed):
     if weapon == "fists" or weapon == "claws":
         return inflictDamage(player, 2 * modifier, 6 * modifier)
     elif weapon == "Iron Broadsword":
-        return inflictDamage(opponent, 100, 250)
+        return inflictDamage(opponent, math.floor(((((2 * opponent.lvl)/5 + 2) * 50)/50 + 2) * .85), (((2 * opponent.lvl)/5 + 2) * 50)/50 + 2)
     return
 
 def inflictDamage(inflicted, min, max):
@@ -105,8 +106,8 @@ weapon = input('Player weapon: ')
 while weapon not in weapons:
     print('Not available')
     weapon = input('Player weapon: ')
-opponent = GenerateMonster(oppClass, 1000, 100, 'fists', 15)
-player = GenerateMonster(playerClass, 150, 200, weapon, 15)
+opponent = GenerateMonster(oppClass, 1000, 100, 'fists', 15, 100)
+player = GenerateMonster(playerClass, 150, 200, weapon, 15, 100)
 
 def main():
 
