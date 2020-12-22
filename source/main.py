@@ -97,9 +97,16 @@ def getHP(character):
 
 
 
-
-opponent = GenerateMonster('Goblin King', 1000, 100, 'fists', 15)
-player = GenerateMonster('Paladin', 150, 200, 'Iron Broadsword', 15)
+oppClass = input('Opponent: ')
+playerClass = input('Player: ')
+print('Weapon select: fists, Iron Broadsword, claws')
+weapons = ['Iron Broadsword', 'claws', 'fists']
+weapon = input('Player weapon: ')
+while weapon not in weapons:
+    print('Not available')
+    weapon = input('Player weapon: ')
+opponent = GenerateMonster(oppClass, 1000, 100, 'fists', 15)
+player = GenerateMonster(playerClass, 150, 200, weapon, 15)
 
 def main():
 
