@@ -1,0 +1,19 @@
+priority:
+1. highest
+2. medium
+3. lowest
+
+pokemon:
+-hp/attack/defense/special attack/special defense/speed (1)
+-type(s) (2)
+-level (2)
+-sprites (3)
+moves:
+-base power (1)
+-type (2)
+damage calc:
+-formula (1)
+-critical (2.75)
+-random (2)
+-same type attack bonus (2.5)
+-type effectiveness (2.5)
