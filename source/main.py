@@ -1,140 +1,185 @@
 import random, time, math
 
-currPlayerHitToken = True
-currOpponentHitToken = True
+types = {
+    "fire" : 0,
+    "water" : 1,
+    "grass" : 2
+}
 
-class GenerateMonster():
-    def __init__(self, name, health, gold, weapon, ac, lvl):
+typeEffectivenessMatchup = [
+      #Fire  #Water #Grass
+    [.5,    .5,     2],   #Fire
+    [ 2,    .5,    .5],   #Water
+    [.5,     2,    .5]    #Grass
+]
+
+class Move():
+    def __init__(self, moveName, basePower, moveType, special):
+        self.moveName = moveName
+        self.basePower = basePower
+        self.moveType = moveType
+        self.special = special
+
+""" Physical Moves """
+PH_fireLash = Move("Fire Lash", 65, "fire", False)
+PH_flipTurn = Move("Flip Turn", 60, "water", False)
+PH_grassySlide = Move("Grassy Slide", 70, "grass", False)
+
+""" Special Moves """
+SP_burnUp = Move("Burn Up", 130, "fire", True)
+SP_hydroPump = Move("Hydro Pump", 110, "water", True)
+SP_petalDance = Move("Petal Dance", 120, "grass", True)
+
+movesList = {
+    # Physical Moves
+    "Fire Lash" : PH_fireLash,
+    "Flip Turn" : PH_flipTurn,
+    "Grassy Slide" : PH_grassySlide,
+    # Special Moves
+    "Burn Up" : SP_burnUp,
+    "Hydro Pump" : SP_hydroPump,
+    "Petal Dance" : SP_petalDance
+}
+
+class GeneratePokemon():
+    def __init__(self, name, health, level, pokType, attack, defense, speed, learnset):
         self.name = name
         self.health = health
-        self.gold = gold
-        self.weapon = weapon
-        self.ac = ac
-        self.lvl = lvl
+        self.level = level
+        self.pokType = pokType
+        self.attack = attack
+        self.defense = defense
+        self.speed = speed
+        self.learnset = learnset
 
-def checkMissPlayer(defender):
+    def ReceiveDamage(self, damage):
+        self.health -= damage
+        if(self.health <= 0):
+            print(self.name," has fainted!")
+
+    def Attack(self, move, target):
+        target.ReceiveDamage(damageFx(self.level, movesList[move].basePower, self.attack, target.defense, move, target.pokType))
+
+def damageFx(level, power, attack, defense, typeSelf, typeTarget):
     """
-
-    Returns a boolean token: if player missed or not.
-
-    If defenders AC (Armor Class) is above players hit the token will evaluate to False,
-    and the player will respectively miss.
+    
+    Returns an float: damage calculated using the pokemon damage formula
 
     """
+    effectiveness = typeEffectivenessMatchup[types[movesList[typeSelf].moveType]][types[typeTarget]]
+               # Critical                                     # Random                   # STAB (Same type attack bonus)          # Type effectiveness
+    modifier = (1.5 if random.randrange(1,16) == 16 else 1) * random.uniform(0.85,1.0) * (1.5 if typeSelf == typeTarget else 1) * (effectiveness)
 
-    global currPlayerHitToken
-    missChance = random.randrange(0, 25)
+    if effectiveness == .5:
+        print("It's not very effective...")
+    elif effectiveness == 2:
+        print("It's super effective!")
 
-    if missChance <= defender:
-        currPlayerHitToken = False
-        return currPlayerHitToken
+    return ((((((level*2)/5)+2)*power*(attack/defense))/50)+2) * modifier
+
+def GetWinner():
+    if(playerPok.health <= 0):
+        print(enemyPok.name," has won the battle")
     else:
-        currPlayerHitToken = True
-        return currPlayerHitToken
+        print(playerPok.name," has won the battle")
 
-def checkMissOpponent(defender):
-    """
-
-    Returns a boolean token: if opponent missed or not.
-
-    If defenders AC (Armor Class) is above opponents hit, the token will evaluate to False,
-    and the opponent will respectively miss.
-
-    """
-
-    global currOpponentHitToken
-    missChance = random.randrange(0, 25) # make this variable
-
-    if missChance <= defender:
-        currOpponentHitToken = False
-        return currOpponentHitToken
-    else:
-        currPlayerHitToken = True
-        return currOpponentHitToken
-
-def determineDamage(weapon, modifier, directed):
-    """
-
-    Returns an integer: damage inflicted by the weapon.
-
-    Relative to the player/opponent's weapon, inflictDamage is called and the function's
-    effects to the opposing's HP is calculated.
-
-    """
-
-    if weapon == "fists" or weapon == "claws":
-        return inflictDamage(player, 2 * modifier, 6 * modifier)
-    elif weapon == "Iron Broadsword":
-        return inflictDamage(opponent, math.floor(((((2 * opponent.lvl)/5 + 2) * 50)/50 + 2) * .85), (((2 * opponent.lvl)/5 + 2) * 50)/50 + 2)
-    return
-
-def inflictDamage(inflicted, min, max):
-    """
-
-    Returns damage inflicted to determineDamage: which is called in main().
-
-    """
-    damageInflicted = random.randrange(min, max+1)
-    if damageInflicted == 0:
-        return 'Miss!'
-    else:
-        inflicted.health-=damageInflicted
-        return damageInflicted
-
-def getWinner(player, enemy):
-    """
-
-    Returns winner of the match by comparing object's HP attribute once knocked below zero.
-
-    """
-
-    if player.health > enemy.health:
-        print(player.name, 'wins!')
-    else:
-        print(enemy.name, 'wins!')
-
-def getHP(character):
-    return character.health
-
-
-
+# Pokemon setup
 oppClass = input('Opponent: ')
 playerClass = input('Player: ')
-print('Weapon select: fists, Iron Broadsword, claws')
-weapons = ['Iron Broadsword', 'claws', 'fists']
-weapon = input('Player weapon: ')
-while weapon not in weapons:
-    print('Not available')
-    weapon = input('Player weapon: ')
-opponent = GenerateMonster(oppClass, 1000, 100, 'fists', 15, 100)
-player = GenerateMonster(playerClass, 150, 200, weapon, 15, 100)
+
+# Pokemon type selection
+print('\n Select a pokemon type from the list:')
+for typ in types.keys():
+    print(typ)
+typeSelected = input('Type: ')
+while typeSelected not in types.keys():
+    print('No type called',typeSelected)
+    typeSelected = input('Type: ')
+
+MaxMoveAmount = 4
+# Moveset move amount selection
+print('\n How many moves would you like to add? Max.',MaxMoveAmount,' Min. 1')
+moveAmount = int(input('Amount: '))
+while moveAmount > MaxMoveAmount or moveAmount < 1:
+    print('Amount of moves should be between 1 and ',maxMoveAmount)
+    moveAmount = int(input('Amount: '))
+
+# Moveset selection
+selectedLearnset = []
+selectedAmount = 0
+print('\n Select ',moveAmount,' moves from the list:')
+for move in movesList:
+    if movesList[move].special:
+        print(move,' : special')
+    else:
+        print(move,' : physical')
+while selectedAmount < moveAmount:
+    selectedMove = input("Add Move: ")
+    while selectedMove not in movesList:
+        print('No move called ',selectedMove)
+        selectedMove = input('Physical move: ')
+    selectedAmount += 1
+    selectedLearnset.append(selectedMove)
+
+enemyLearnSet = [
+    "Fire Lash",
+    "Burn Up"
+]
+
+enemyPok = GeneratePokemon(oppClass, 1000, 99, "fire", 100, 100, 10, enemyLearnSet)
+playerPok = GeneratePokemon(playerClass, 1000, 99, typeSelected, 100, 100, 10, selectedLearnset)
 
 def main():
 
-    playerInitialHealth = player.health
-    opponentInitialHealth = opponent.health
+    print("\n\n\n\n",playerPok.name," VS ",enemyPok.name,"\n")
 
-    while (opponent.health >= 0) and (player.health >= 0):
+    while (enemyPok.health > 0 and playerPok.health > 0):
 
-        time.sleep(1)
+        print('Select move to use from the list:')
+        for move in playerPok.learnset:
+            print(move)
+        moveToUse = input('Move: ')
+        while moveToUse not in playerPok.learnset:
+            print('No move called ',moveToUse," available")
+            moveToUse = input('Move: ')
 
-        if (currPlayerHitToken):
-            print("%s HP:" % player.name, getHP(player))
-            print("Damage to %s:" % opponent.name, determineDamage(player.weapon, 1, opponent.health))
+        playerturn = False
+
+        if enemyPok.speed > playerPok.speed:
+            playerturn = False
+        elif playerPok.speed > enemyPok.speed:
+            playerturn = True
         else:
-            print('%s HP:' % player.name, getHP(player))
-            print('%s missed!' % player.name)
+            randTurn = random.randrange(0,1)
+            if randTurn == 0:
+                playerturn = True
+            else:
+                playerturn = False
 
-        time.sleep(1)
-
-        if(currOpponentHitToken):
-            print("%s HP:" % opponent.name, getHP(opponent))
-            print("Damage to: %s" % player.name, determineDamage(opponent.weapon, 1, player.health))
+        if playerturn:
+            print(playerPok.name," uses ", moveToUse," against ",enemyPok.name)
+            playerPok.Attack(moveToUse, enemyPok)
+            print('\n')
+            if(enemyPok.health > 0):
+                print(enemyPok.name," uses ",enemyPok.learnset[random.randrange(0,len(enemyPok.learnset))]," against ",playerPok.name)
+                enemyPok.Attack(enemyPok.learnset[random.randrange(0,len(enemyPok.learnset))], playerPok)
+                print('\n')
         else:
-            print("%s HP:" % opponent.name, getHP(opponent))
-            print('%s missed!' % opponent.name)
+            print(enemyPok.name," uses ",enemyPok.learnset[random.randrange(0,len(enemyPok.learnset))]," against ",playerPok.name)
+            enemyPok.Attack(enemyPok.learnset[random.randrange(0,len(enemyPok.learnset))], playerPok)
+            print('\n')
+            if(playerPok.health > 0):
+                print(playerPok.name," uses ", moveToUse," against ",enemyPok.name)
+                playerPok.Attack(moveToUse, enemyPok)
+                print('\n')
+        
+        print(playerPok.name,"| HP: ",round(playerPok.health))
+        print(enemyPok.name,"| HP: ",round(enemyPok.health))
+        print('\n')
 
-    getWinner(player, opponent)
+    GetWinner()
+    input('Press enter to continue . . .')
+        
 
 if __name__ == "__main__":
     main()
